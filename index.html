@@ -295,7 +295,6 @@ function hasReachedDailyLimit() {
 async function talkToBark() {
   const input = document.getElementById("userInput").value.trim();
   const responseElement = document.getElementById("responseText");
-  const audioPlayer = document.getElementById("audioResponse");
 
   if (!input) return;
 
@@ -320,11 +319,16 @@ async function talkToBark() {
       return;
     }
 
-    const audioBlob = await res.blob();
+    const audioData = await res.arrayBuffer();
+    const audioBlob = new Blob([audioData], { type: "audio/mpeg" });
     const audioUrl = URL.createObjectURL(audioBlob);
-    audioPlayer.src = audioUrl;
-    audioPlayer.style.display = 'block';
-    audioPlayer.play();
+    const audio = new Audio(audioUrl);
+
+    audio.play().catch(err => {
+      console.error("Audio play error:", err);
+      responseElement.innerText = "🔇 Audio couldn't be played automatically. Tap to try again!";
+    });
+
     responseElement.innerText = "🎤 Bark loaded... Now listen to greatness!";
   } catch (err) {
     console.error("Fetch error:", err);
@@ -332,5 +336,3 @@ async function talkToBark() {
   }
 }
 </script>
-</body>
-</html>
