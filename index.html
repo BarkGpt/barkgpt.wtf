@@ -307,7 +307,7 @@ async function talkToBark() {
   responseElement.innerText = "🤖 BARKGPT is sniffing alpha...";
 
   try {
-    const res = await fetch("https://barkbot-api.barkbot-api.workers.dev", {
+    const res = await fetch("https://barkbot-api.barkbot-api.workers.dev/api", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
