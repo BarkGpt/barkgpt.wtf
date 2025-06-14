@@ -291,7 +291,7 @@ Blockchain: Solana | Max Supply: 69 T | Total Supply: 69 T | Circulation Supply:
     const responseElement = document.getElementById("responseText");
 
     if (!input) {
-      responseElement.innerText = "🐶 Please ask me something first.";
+      responseElement.innerText = "🐶 Please ask BarkGPT something.";
       return;
     }
 
@@ -305,23 +305,8 @@ Blockchain: Solana | Max Supply: 69 T | Total Supply: 69 T | Circulation Supply:
       });
 
       const data = await res.json();
-
-      // Show text reply
-      const text = data?.response || "🤷 BARKGPT forgot to bark.";
-      responseElement.innerText = text;
-
-      // Play audio if available and not broken
-      if (data.audio && data.audio.startsWith("data:audio/mpeg;base64")) {
-        const audio = new Audio(data.audio);
-        try {
-          await audio.play();
-        } catch (err) {
-          console.warn("Audio play failed:", err);
-          responseElement.innerText += "\n🔇 Audio couldn’t play — check browser settings.";
-        }
-      } else {
-        console.warn("No valid audio returned.");
-      }
+      const reply = data?.response || "🤷 BARKGPT forgot to bark.";
+      responseElement.innerText = reply;
 
     } catch (err) {
       console.error("Fetch error:", err);
