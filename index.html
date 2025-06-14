@@ -180,10 +180,11 @@
 
 <div class="section">
 <img alt="$BARKGPT Logo" src="BARKGPT-Logo.png" style="display: block; margin: 0 auto; max-width: 200px;"/>
-<div id="barkbot" style="margin: 2rem 0; text-align: center;">
+<div id="BarkBot" style="margin: 2rem 0; text-align: center;">
+  <h2 style="font-size: 1.8rem; color: #222; margin-bottom: 1rem;">💬 BarkBot</h2>
   <input id="userInput" placeholder="Ask BARKGPT anything..." style="padding:10px; font-size: 16px; width: 70%; max-width: 500px;" />
-  <button onclick="talkToBark()" style="padding:10px; font-size: 16px;">Send</button>
-  <div id="responseText" style="margin-top: 20px; font-size: 1.2em; white-space: pre-wrap;"></div>
+  <button onclick="talkToBark()" style="padding:10px; font-size: 16px; margin-left: 10px;">Send</button>
+  <div id="responseText" style="margin-top: 20px; font-size: 1.2em; white-space: pre-wrap; max-width: 700px; margin: auto;"></div>
 </div>
 
 <h2>Woof</h2>
@@ -283,11 +284,18 @@ Blockchain: Solana | Max Supply: 69 T | Total Supply: 69 T | Circulation Supply:
 </footer>
 <script>
   async function talkToBark() {
-    const input = document.getElementById("userInput").value.trim();
-    if (!input) return;
+    const inputBox = document.getElementById("userInput");
+    const responseBox = document.getElementById("responseText");
 
-    const responseElement = document.getElementById("responseText");
-    responseElement.innerText = "🧠 BARKGPT is sniffing alpha...";
+    if (!inputBox || !responseBox) return;
+
+    const input = inputBox.value.trim();
+    if (!input) {
+      responseBox.innerText = "❗ Please type something first!";
+      return;
+    }
+
+    responseBox.innerText = "🧠 BARKGPT is sniffing alpha...";
 
     try {
       const res = await fetch("https://barkgpt.barkbot-api.workers.dev", {
@@ -322,13 +330,47 @@ Keep answers short, hilarious, and always tie things back to why $BARKGPT is awe
       });
 
       const data = await res.json();
-      const text = data.choices?.[0]?.message?.content || "🤷 BARKGPT forgot to bark.";
-      responseElement.innerText = text;
+
+      if (data.error) {
+        responseBox.innerText = `💥 BARKGPT Error: ${data.error.message || "Something broke"}`;
+      } else {
+        responseBox.innerText = data.choices?.[0]?.message?.content || "🤷 BARKGPT forgot to bark.";
+      }
+
     } catch (err) {
       console.error("Fetch error:", err);
-      responseElement.innerText = "🐶 BARKGPT tripped on gas fees again. Try later.";
+      responseBox.innerText = "🐶 BARKGPT tripped on gas fees again. Try later.";
     }
   }
 </script>
+✅ And make sure your bot input/button is inside the page like this:
+html
+Copy
+Edit
+<div id="barkbot" style="margin: 2rem 0; text-align: center;">
+  <input id="userInput" placeholder="Ask BARKGPT anything..." style="padding:10px; font-size: 16px; width: 70%; max-width: 500px;" />
+  <button onclick="talkToBark()" style="padding:10px; font-size: 16px;">Send</button>
+  <div id="responseText" style="margin-top: 20px; font-size: 1.2em; white-space: pre-wrap;"></div>
+</div>
+🧪 Bonus: Test your Cloudflare Worker with mock data
+To confirm the Worker is not the issue, try this in your browser console:
+
+js
+Copy
+Edit
+fetch("https://barkgpt.barkbot-api.workers.dev", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "gpt-4o",
+    temperature: 1,
+    messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      { role: "user", content: "Who let the dogs out?" }
+    ]
+  })
+}).then(r => r.json()).then(console.log)
 </body>
 </html>
