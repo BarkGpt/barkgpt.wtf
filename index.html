@@ -298,7 +298,7 @@ Blockchain: Solana | Max Supply: 69 T | Total Supply: 69 T | Circulation Supply:
     responseBox.innerText = "🧠 BARKGPT is sniffing alpha...";
 
     try {
-      const res = await fetch("https://barkgpt.barkbot-api.workers.dev", {
+      const res = await fetch("https://barkgpt-backend.onrender.com/api/barkgpt", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
